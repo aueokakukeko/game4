@@ -1,1 +1,119 @@
 aiuooi
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🐎 馬の迷路ゲーム</title>
+<style>
+  body {
+    margin: 0;
+    background: #f4efe6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: sans-serif;
+  }
+
+  canvas {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+
+  #info {
+    position: absolute;
+    top: 10px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="info">
+  <h2>🐎 馬の迷路ゲーム</h2>
+  <p>矢印キーでゴールへ！</p>
+</div>
+
+<canvas id="game" width="400" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const tileSize = 40;
+const rows = 10;
+const cols = 10;
+
+// 迷路（1 = 壁, 0 = 道）
+const maze = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,1,0,0,0,0,1],
+  [1,0,1,0,1,0,1,1,0,1],
+  [1,0,1,0,0,0,0,1,0,1],
+  [1,0,1,1,1,1,0,1,0,1],
+  [1,0,0,0,0,1,0,1,0,1],
+  [1,1,1,1,0,1,0,1,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
+];
+
+let player = { x: 1, y: 1 };
+let goal = { x: 8, y: 8 };
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+
+      if (maze[y][x] === 1) {
+        ctx.fillStyle = "#6b4f2a"; // 壁
+        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+      } else {
+        ctx.fillStyle = "#d8f3c0"; // 草
+        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+      }
+    }
+  }
+
+  // ゴール
+  ctx.fillStyle = "gold";
+  ctx.fillRect(goal.x * tileSize + 10, goal.y * tileSize + 10, 20, 20);
+
+  // 馬（プレイヤー）
+  ctx.font = "28px serif";
+  ctx.fillText("🐎", player.x * tileSize + 5, player.y * tileSize + 30);
+}
+
+function move(dx, dy) {
+  const nx = player.x + dx;
+  const ny = player.y + dy;
+
+  if (maze[ny][nx] === 0) {
+    player.x = nx;
+    player.y = ny;
+  }
+
+  if (player.x === goal.x && player.y === goal.y) {
+    setTimeout(() => {
+      alert("ゴール！🎉");
+      player = { x: 1, y: 1 };
+    }, 100);
+  }
+
+  draw();
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowUp") move(0, -1);
+  if (e.key === "ArrowDown") move(0, 1);
+  if (e.key === "ArrowLeft") move(-1, 0);
+  if (e.key === "ArrowRight") move(1, 0);
+});
+
+draw();
+</script>
+
+</body>
+</html>
